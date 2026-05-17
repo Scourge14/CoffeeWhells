@@ -1,10 +1,11 @@
-const CACHE_NAME = "kahve-carki-v1";
+const CACHE_NAME = "kahve-carki-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./service-worker.js",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", function(event){

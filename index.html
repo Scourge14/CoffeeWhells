@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#4A2F24" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="Kahve" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Kahve Çarkı" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="manifest" href="./manifest.json" />
-<link rel="apple-touch-icon" href="./icons/icon-192.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
 <title>Kahve &#199;ark&#305;</title>
 
 <style>
@@ -690,14 +691,15 @@ h1{
 
 .popup{
   width:min(92vw,560px);
-  background:linear-gradient(180deg, var(--bg-card) 0%, var(--cream) 100%);
-  border:4px solid rgba(200,138,74,.48);
+  background:#FFF9F0;
+  border:1px solid rgba(200, 138, 74, 0.45);
   border-radius:34px;
   padding:34px 22px 28px;
   text-align:center;
   position:relative;
   animation:pop .35s ease;
-  box-shadow:var(--shadow-panel);
+  color:#2B1D16;
+  box-shadow:0 18px 45px rgba(43, 29, 22, 0.12);
 }
 
 @keyframes pop{
@@ -749,6 +751,7 @@ h1{
   margin-top:26px;
   border:none;
   cursor:pointer;
+  min-height:48px;
   padding:14px 46px;
   border-radius:999px;
   font-size:22px;
@@ -1062,37 +1065,19 @@ const ideaResult = document.getElementById("ideaResult");
 const ideaResultMessage = document.getElementById("ideaResultMessage");
 
 const coffees = [
-  {
-    name: "White Mocha",
-    message: "Bug&uuml;n kahvenin yan&#305;nda g&uuml;zel giden bir detay daha var:<br />g&uuml;l&uuml;msemen ortam&#305; tatl&#305;la&#351;t&#305;r&#305;yor &#9749;"
-  },
-  {
-    name: "Ice Latte",
-    message: "Sende tam bu kahve gibi bir hava var:<br />serin, tatl&#305; ve keyif y&uuml;kselten &#10024;"
-  },
-  {
-    name: "Caramel Latte",
-    message: "Karamel tad&#305; tamam da as&#305;l olay sensin:<br />bug&uuml;n moduna ayr&#305; bir &ouml;zen gelmi&#351; &#9786;"
-  },
-  {
-    name: "Latte Spanish",
-    message: "Yumu&#351;ak ama ak&#305;lda kalan bir havas&#305; var:<br />biraz kahve, biraz da senden gelen etki gibi &#10024;"
-  },
-  {
-    name: "Mocha",
-    message: "Bug&uuml;n enerjin mocha gibi net:<br />tatl&#305;, s&#305;cak ve insan&#305;n tekrar g&ouml;resi geliyor &#127851;"
-  },
-  {
-    name: "Vanilla Latte",
-    message: "Vanilya gibi yumu&#351;ak bir g&uuml;n olmu&#351;:<br />sen g&uuml;l&uuml;nce ortam da sana uyum sa&#287;l&#305;yor &#127804;"
-  }
+  { name: "White Mocha" },
+  { name: "Ice Latte" },
+  { name: "Caramel Latte" },
+  { name: "Latte Spanish" },
+  { name: "Mocha" },
+  { name: "Vanilla Latte" }
 ];
 
 let rotation = 0;
 let spinning = false;
 let touchTriggered = false;
 const IDEA_STORAGE_KEY = "kahve-carki-fikirler";
-const LAST_POPUP_MESSAGE_KEY = "kahve-carki-son-soz";
+const LAST_COMPLIMENT_KEY = "lastCompliment";
 const IDEA_MAX_COUNT = 8;
 const ideaWheelColors = [
   "var(--wheel-1)",
@@ -1108,63 +1093,59 @@ let ideaRotation = 0;
 let ideaSpinning = false;
 let ideas = loadIdeas();
 
-const popupMessagesByCoffee = {
-  "White Mocha": "Bug&uuml;n kahvenin yan&#305;nda minik bir bonus var:<br />g&uuml;l&uuml;&#351;&uuml;n ortam&#305; resmen g&uuml;zelle&#351;tiriyor &#9749;",
-  "Ice Latte": "Bu kahve senden ilham alm&#305;&#351; gibi:<br />hem cool hem de insan&#305;n i&ccedil;ini a&ccedil;&#305;yor &#10024;",
-  "Caramel Latte": "Tatl&#305;l&#305;k seviyesi biraz y&uuml;ksek olabilir,<br />ama su&ccedil; kahvede mi emin de&#287;ilim &#9786;",
-  "Latte Spanish": "Yumu&#351;ak ama ak&#305;lda kalan bir havas&#305; var:<br />biraz kahve, biraz da senden gelen etki gibi &#10024;",
-  "Mocha": "Bug&uuml;n moduna nazar de&#287;mesin,<br />&ccedil;&uuml;nk&uuml; enerjin fazla iyi hissettiriyor &#9749;",
-  "Vanilla Latte": "Vanilya gibi yumu&#351;ak, bahar gibi ferah:<br />g&uuml;l&uuml;msemen g&uuml;n&uuml; kolayla&#351;t&#305;r&#305;yor &#10052;"
-};
-
-const extraPopupMessages = [
-  "Bugün kahveden daha tatlı bir şey varsa o da senin gülüşün olabilir.",
-  "Bu kahve seçildiyse biri bugün seni biraz fazla düşünebilir.",
-  "Kahven sıcak, enerjin tatlı, bakışların zaten tehlikeli.",
+const compliments = [
+  "Bugün kahveden daha tatlı bir şey varsa o da senin gülüşün olabilir ☕",
+  "Bu kahve seçildiyse günün güzel geçmeye niyetli demektir.",
+  "Kahven güzel, enerjin daha güzel.",
+  "Bugün biraz fazla iyi görünüyorsun, kahve bile fark etti.",
+  "Kahve çarkı söylüyor: bugün gülümsemek sana çok yakışacak.",
+  "Sen kahveni seçtin, kahve de sana güzel bir gün seçti.",
+  "Bugün modun latte köpüğü gibi: yumuşak, tatlı ve hafif havalı.",
+  "Bu kahve sana sakinlik, şans ve minik bir tebessüm getirsin.",
+  "Bugün enerjin etrafa iyi gelen insanlardan.",
+  "Karamel gibi bir gün olsun: sıcak, tatlı ve akılda kalan.",
+  "Kahve bahane, bugün güzel hissetmen şahane.",
+  "Bugün kendini biraz daha sev; kahve de aynı fikirde.",
+  "Bu çark boşuna dönmedi, bugün şans senden yana.",
+  "Kahveni yudumla, çünkü bugün acele değil keyif günü.",
+  "Bugün küçük bir mesaj, tatlı bir bakış veya güzel bir plan çıkabilir.",
+  "Kahven sıcak, enerjin tatlı, havan yerinde.",
   "Bugün birinin aklında kalma ihtimalin yüksek gibi.",
   "Bu kadar tatlı bir kahve seçimi tesadüf olamaz.",
-  "Bugün gülüşünle birinin gününü bozabilirsin, iyi anlamda tabii.",
-  "Kahve köpüğü gibi hafif, ama etkisi büyük bir enerjin var.",
-  "Bugün ‘bir kahve içelim mi?’ cümlesi kader olabilir.",
-  "Sen kahveni seçtin, kahve de seni seçti gibi.",
-  "Bugün biraz tatlılık yapma sırası sende.",
-  "Bugün kahven kadar tatlı, gülüşün kadar güzel geçsin ☕",
-  "Bu kahve seçildiyse bugün şans senden yana demektir ✨",
-  "Evren bugün sana küçük ama tatlı bir sürpriz hazırlıyor gibi ☕",
-  "Kahveni al, omuzlarını indir; bugün güzel şeyler olabilir.",
-  "Bugün enerjin latte köpüğü gibi yumuşak ama etkili.",
-  "Bir kahve, bir gülüş, bir de sen… gün zaten tamam.",
-  "Bugün kendine biraz daha nazik davran; kahve de bunu söylüyor.",
-  "Bu çark boşuna dönmedi, bugün modun yükseliyor.",
-  "Kahven hazırsa güzel haberler de yolda olabilir.",
-  "Bugün tatlı konuşmalar, küçük gülüşler ve güzel tesadüfler günü.",
-  "Karamel gibi bir gün: biraz tatlı, biraz sıcak, biraz unutulmaz.",
-  "Kahve bahane, bugün güzel hissetmen şahane.",
-  "Bugün içindeki ışık kahve fincanından bile daha sıcak.",
-  "Biri bugün seni görünce ‘iyi ki’ diye düşünebilir.",
-  "Bu kahve sana sakinlik, şans ve minik bir tebessüm getirsin.",
-  "Bugün kendini hafife alma; enerjin düşündüğünden daha güzel.",
-  "Kahveni yudumla, çünkü bugün acele değil keyif günü.",
-  "Bugün kalbinin istediği şey biraz daha yakına gelebilir.",
-  "Bu seçim tesadüf değil; kahve kaderin mini fragmanı olabilir.",
-  "Bugün güzel görünüyorsun, kahve de bunu onayladı.",
-  "Biraz kahve, biraz cesaret; bugün her şey daha kolay.",
-  "Bugün fazla düşünme, bazen en güzel şeyler kendiliğinden olur.",
-  "Kahvenin kokusu gibi, bugün enerjin de etrafa iyi gelsin.",
-  "Bugün küçük bir mesaj, tatlı bir bakış veya güzel bir plan çıkabilir.",
-  "Bu kahve sana ‘kendini sev, günü de güzelleştir’ diyor.",
-  "Bugün senin modun: soft, tatlı ve hafif havalı.",
+  "Gülüşün bugün kahve kokusu gibi ortama iyi gelecek.",
+  "Bugün senin modun: soft, tatlı ve biraz da tehlikeli.",
   "Köpüğü bol, şansı yüksek, enerjisi güzel bir gün olsun.",
-  "Bugün biri senin enerjini fark edebilir, haberin olsun.",
-  "Kahve çarkı söylüyor: bugün gülümsemek sana çok yakışacak.",
-  "Bugün hayat sana küçük bir kahve molası kadar iyi gelsin."
+  "Bugün aynaya bir kere daha bak; kahve haklı, iyi görünüyorsun.",
+  "Kahve çarkı bugün sana güzel bir enerji yazdı.",
+  "Bugün biri senin tatlılığını fark edebilir, haberin olsun.",
+  "Kahvenin yanına en çok yakışan şey bugün senin gülüşün.",
+  "Biraz kahve, biraz cesaret; bugün her şey daha kolay.",
+  "Bugün kalbinin istediği şey biraz daha yakına gelebilir.",
+  "Sen bugün sıradan bir günün güzel sebebi olabilirsin.",
+  "Kahve fincanı küçük ama bugünkü enerjin büyük.",
+  "Bugün tatlı konuşmalar ve güzel tesadüfler günü.",
+  "Kahve seçildi, enerji yükseldi, sıra sende.",
+  "Bugün ‘iyi ki’ dedirtecek küçük bir an yaşayabilirsin.",
+  "Senin enerjin bugün filtre kahve değil, direkt özel seri.",
+  "Bu kahve sana ‘kendini hafife alma’ diyor.",
+  "Bugün biraz havalı olmak serbest, hatta gerekli.",
+  "Kahve köpüğü gibi hafif ama etkisi büyük bir enerjin var.",
+  "Bugün güzel şeyler sana küçük küçük yaklaşabilir.",
+  "Bu çark sana tatlılık, sakinlik ve biraz da şans verdi.",
+  "Bugün gülüşünle birinin gününü güzelleştirebilirsin.",
+  "Kahveni al, omuzlarını indir; bugün iyi şeyler mümkün.",
+  "Bugün kahve bahanesiyle güzel bir gülümseme yakalayabilirsin.",
+  "Kahve falı değil ama çark net konuştu: bugün tatlısın.",
+  "Bu kahve sana minik bir şans, bolca tatlılık getirsin.",
+  "Bugün enerjin tam kahve yanında uzun sohbetlik.",
+  "Kahve sıcak, gün güzel, sen zaten yeterince havalısın.",
+  "Bugün birinin içinden ‘ne güzel gülüyor’ geçebilir.",
+  "Kahve seçimin bile stil sahibi, bugün modun yüksek.",
+  "Bugün kendine güzel davran; zaten bunu hak ediyorsun.",
+  "Bu çark bugün sana güzel bir bahaneyle gülümse dedi.",
+  "Kahveni al, çünkü bugün küçük mutlulukların günü.",
+  "Bugün biraz parlıyorsun, kahve de bunu saklayamadı."
 ];
-
-const popupMessagePool = Object.keys(popupMessagesByCoffee)
-  .map(function(coffee){
-    return popupMessagesByCoffee[coffee];
-  })
-  .concat(extraPopupMessages);
 
 function normalizeRotation(angle){
   return ((angle % 360) + 360) % 360;
@@ -1186,41 +1167,43 @@ function getSelectedIdeaIndex(angle){
   return Math.floor(pointerAngle / segment) % ideas.length;
 }
 
-function getLastPopupMessage(){
+function getLastCompliment(){
   try{
-    return window.localStorage.getItem(LAST_POPUP_MESSAGE_KEY) || "";
+    return window.localStorage.getItem(LAST_COMPLIMENT_KEY) || "";
   }catch(error){
     try{
-      return window.sessionStorage.getItem(LAST_POPUP_MESSAGE_KEY) || "";
+      return window.sessionStorage.getItem(LAST_COMPLIMENT_KEY) || "";
     }catch(storageError){
       return "";
     }
   }
 }
 
-function saveLastPopupMessage(message){
+function saveLastCompliment(compliment){
   try{
-    window.localStorage.setItem(LAST_POPUP_MESSAGE_KEY, message);
+    window.localStorage.setItem(LAST_COMPLIMENT_KEY, compliment);
   }catch(error){
     try{
-      window.sessionStorage.setItem(LAST_POPUP_MESSAGE_KEY, message);
+      window.sessionStorage.setItem(LAST_COMPLIMENT_KEY, compliment);
     }catch(storageError){
       return;
     }
   }
 }
 
-function getRandomPopupMessage(){
-  const lastMessage = getLastPopupMessage();
-  const availableMessages = popupMessagePool.filter(function(message){
-    return message !== lastMessage;
-  });
-  const messages = availableMessages.length > 0 ? availableMessages : popupMessagePool;
-  const selectedMessage = messages[Math.floor(Math.random() * messages.length)];
+function getRandomCompliment(){
+  const lastCompliment = getLastCompliment();
+  let selected = compliments[Math.floor(Math.random() * compliments.length)];
+  let guard = 0;
 
-  saveLastPopupMessage(selectedMessage);
+  while(compliments.length > 1 && selected === lastCompliment && guard < 10){
+    selected = compliments[Math.floor(Math.random() * compliments.length)];
+    guard += 1;
+  }
 
-  return selectedMessage;
+  saveLastCompliment(selected);
+
+  return selected;
 }
 
 function normalizeIdeaValue(value){
@@ -1408,7 +1391,7 @@ function spinIdeaWheel(){
 
 function openModal(index){
   coffeeName.innerHTML = "&#9825; " + coffees[index].name + " &#9825;";
-  coffeeMessage.innerHTML = getRandomPopupMessage() || coffees[index].message;
+  coffeeMessage.textContent = getRandomCompliment();
   modal.classList.add("show");
   modal.setAttribute("aria-hidden", "false");
 }
