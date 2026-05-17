@@ -1147,6 +1147,31 @@ const compliments = [
   "Bugün biraz parlıyorsun, kahve de bunu saklayamadı."
 ];
 
+const standoutCompliments = [
+  "Bugün kahveden daha tatlı bir şey varsa o da senin gülüşün olabilir ☕",
+  "Bugün biraz fazla iyi görünüyorsun, kahve bile fark etti.",
+  "Kahve çarkı söylüyor: bugün gülümsemek sana çok yakışacak.",
+  "Sen kahveni seçtin, kahve de sana güzel bir gün seçti.",
+  "Bugün modun latte köpüğü gibi: yumuşak, tatlı ve hafif havalı.",
+  "Bugün birinin aklında kalma ihtimalin yüksek gibi.",
+  "Bu kadar tatlı bir kahve seçimi tesadüf olamaz.",
+  "Gülüşün bugün kahve kokusu gibi ortama iyi gelecek.",
+  "Bugün senin modun: soft, tatlı ve biraz da tehlikeli.",
+  "Bugün aynaya bir kere daha bak; kahve haklı, iyi görünüyorsun.",
+  "Bugün biri senin tatlılığını fark edebilir, haberin olsun.",
+  "Kahvenin yanına en çok yakışan şey bugün senin gülüşün.",
+  "Sen bugün sıradan bir günün güzel sebebi olabilirsin.",
+  "Senin enerjin bugün filtre kahve değil, direkt özel seri.",
+  "Bugün biraz havalı olmak serbest, hatta gerekli.",
+  "Kahve köpüğü gibi hafif ama etkisi büyük bir enerjin var.",
+  "Bugün gülüşünle birinin gününü güzelleştirebilirsin.",
+  "Kahve falı değil ama çark net konuştu: bugün tatlısın.",
+  "Kahve sıcak, gün güzel, sen zaten yeterince havalısın.",
+  "Bugün birinin içinden ‘ne güzel gülüyor’ geçebilir.",
+  "Kahve seçimin bile stil sahibi, bugün modun yüksek.",
+  "Bugün biraz parlıyorsun, kahve de bunu saklayamadı."
+];
+
 function normalizeRotation(angle){
   return ((angle % 360) + 360) % 360;
 }
@@ -1193,11 +1218,13 @@ function saveLastCompliment(compliment){
 
 function getRandomCompliment(){
   const lastCompliment = getLastCompliment();
-  let selected = compliments[Math.floor(Math.random() * compliments.length)];
+  let activePool = Math.random() < 0.7 ? standoutCompliments : compliments;
+  let selected = activePool[Math.floor(Math.random() * activePool.length)];
   let guard = 0;
 
   while(compliments.length > 1 && selected === lastCompliment && guard < 10){
-    selected = compliments[Math.floor(Math.random() * compliments.length)];
+    activePool = Math.random() < 0.7 ? standoutCompliments : compliments;
+    selected = activePool[Math.floor(Math.random() * activePool.length)];
     guard += 1;
   }
 
